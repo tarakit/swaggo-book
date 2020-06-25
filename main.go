@@ -1,16 +1,21 @@
 package main
 
+// @title Book API
 import (
-	"RestAPI/helper"
-	"RestAPI/models"
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 
+	"github.com/RestAPI/helper"
+	"github.com/RestAPI/models"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/x/mongo/driver/uuid"
 
 )
 
@@ -158,16 +163,49 @@ func getBooks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(books)
 }
 
+func uploadFile(w http.ResponseWriter, r *http.Request) {
+	// upload of 10MB files
+	r.ParseMultipartForm(10 << 20)
+
+	file, handler, err := r.FormFile("file")
+
+	if err != nil {
+		fmt.Println(err)
+		return
+		// return "", err
+	}
+	defer file.Close()
+
+	// generate uuid concatenated with chosen file name
+	id, er := uuid.New()
+	if er != nil {
+		return
+	}
+	FILENAME := fmt.Sprint(id, handler.Filename)
+
+	// f, err := os.OpenFile("C:/Users/kitta/go/src/github.com/RestAPI/photos/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	f, err := os.OpenFile("./photos/"+FILENAME, os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Println(err)
+		return
+		// return "", err
+	}
+	defer f.Close()
+	io.Copy(f, file)
+
+}
+
 func main() {
 
 	// init Router
-	r := mux.NewRouter()
+	r := mux.NewRouter().StrictSlash(true)
 
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	r.HandleFunc("/api/upload", uploadFile).Methods("POST")
 
-	log.Fatal(http.ListenAndServe(":8000", r))
+	log.Fatal(http.ListenAndServe(":5000", r))
 }
