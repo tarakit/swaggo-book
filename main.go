@@ -16,7 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/x/mongo/driver/uuid"
-
 )
 
 func deleteBook(w http.ResponseWriter, r *http.Request) {
@@ -185,6 +184,8 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 
 	// f, err := os.OpenFile("C:/Users/kitta/go/src/github.com/RestAPI/photos/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 	f, err := os.OpenFile("./photos/"+FILENAME, os.O_WRONLY|os.O_CREATE, 0666)
+	// f, err := os.OpenFile("sftp://khracer@110.74.194.125/opt/khracer/ftp/upload/"+FILENAME, os.O_WRONLY|os.O_CREATE, 0666)
+
 	if err != nil {
 		fmt.Println(err)
 		return

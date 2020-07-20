@@ -1,0 +1,17 @@
+@host = localhost:5000/api/books
+
+
+# Get with RC , all books
+GET  http://{{host}}
+
+# Post with RC
+POST http://{{host}} HTTP/1.1
+Content-Type: application/json
+
+{
+    "title" : "Posted by Rest Client",
+    "author" : {
+        "firstName" : "Rest",
+        "lastName" : "client"
+    }
+}
