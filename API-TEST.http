@@ -1,12 +1,12 @@
 @host = localhost:5000/api/books
-
-
+@contentType = application/json
+@id = 5ed07c45a667ed04c8bf3577
 # Get with RC , all books
 GET  http://{{host}}
 
 # Post with RC
 POST http://{{host}} HTTP/1.1
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
     "title" : "Posted by Rest Client",
@@ -15,3 +15,16 @@ Content-Type: application/json
         "lastName" : "client"
     }
 }
+
+PUT http://{{host}}/{{id}}
+Content-Type: {{contentType}}
+
+{
+    "title" : "Update by Rest Client",
+    "author" : {
+        "firstName" : "Update Rest",
+        "lastName" : "Update client"
+    }
+}
+
+DELETE  http://{{host}}/{{id}}
